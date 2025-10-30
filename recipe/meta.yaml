@@ -1,4 +1,4 @@
-{% set version = "19.1.7" %}
+{% set version = "19.1.5" %}
 {% set major_ver = version.split(".")[0] %}
 {% set tail_ver = version.split(".")[-1] %}
 {% set maj_min = major_ver ~ "." ~ version.split(".")[1] %}
@@ -12,8 +12,8 @@ package:
   version: {{ version }}
 
 source:
-  url: https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-{{ version.replace(".rc", "-rc") }}.tar.gz
-  sha256: 59abea1c22e64933fad4de1671a61cdb934098793c7a31b333ff58dc41bff36c
+  url: https://github.com/swiftlang/llvm-project/archive/refs/tags/swift-6.1.1-RELEASE.tar.gz
+  sha256: 949b0095aa50ffe924ac12c879bdafac6fac02be54935dce8e8a392101fa126f
   patches:
     # - patches/intel-D47188-svml-VF.patch    # Fixes vectorizer and extends SVML support
     # - patches/expect-fastmath-entrypoints-in-add-TLI-mappings.ll.patch # adjusts test added in 10.0.0 for intel-D47188-svml-VF.patch effects
@@ -23,6 +23,7 @@ source:
 build:
   number: 2
   merge_build_host: false
+  string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
 
 requirements:
   build:
@@ -47,6 +48,7 @@ outputs:
     script: install_llvm.bat  # [win]
     build:
       activate_in_script: true
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -100,6 +102,7 @@ outputs:
       activate_in_script: true
       run_exports:                                                    # [not win]
         - {{ pin_subpackage("libllvm" ~ major_ver, max_pin="x.x") }}  # [not win]
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -129,6 +132,7 @@ outputs:
   # for run_exports
   - name: llvm
     build:
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
       run_exports:                                                    # [not win]
         - {{ pin_subpackage("libllvm" ~ major_ver, max_pin="x.x") }}  # [not win]
     requirements:
@@ -158,6 +162,7 @@ outputs:
       # On Windows there are no symlinks and copying will create a new package
       # that is 300MB+
       skip: true  # [win]
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -191,6 +196,7 @@ outputs:
     script: install_llvm.bat  # [win]
     build:
       activate_in_script: true
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -236,6 +242,7 @@ outputs:
       # https://github.com/llvm/llvm-project/blob/llvmorg-16.0.6/llvm/tools/llvm-shlib/CMakeLists.txt#L82-L85
       # osx currently fails as well, see https://github.com/llvm/llvm-project/issues/64657
       skip: true  # [not win]
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       build:
         - {{ stdlib('c') }}
@@ -267,6 +274,7 @@ outputs:
         - lit = lit.main:main
         # ... and then the CMake files we install here (e.g. AddLLVM.cmake) look for another
         - llvm-lit = lit.main:main
+      string: swift_h{{ PKG_HASH }}_{{ PKG_BUILDNUM }}
     requirements:
       host:
         - python {{ python_min }}
